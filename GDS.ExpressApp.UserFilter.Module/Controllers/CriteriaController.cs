@@ -11,6 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+// Adopted Vbacna@gmail.com 2020-03-27
+// ***********************************************************************
+using System;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.Persistent.Base;
@@ -19,6 +22,8 @@ using GDS.ExpressApp.UserFilter.Module.BusinessObjects;
 using DevExpress.Xpo;
 using System.Collections.Generic;
 using System.Linq;
+
+using log4net;
 
 namespace GDS.ExpressApp.UserFilter.Module.Controllers
 {
@@ -29,6 +34,7 @@ namespace GDS.ExpressApp.UserFilter.Module.Controllers
     /// <seealso cref="DevExpress.ExpressApp.ObjectViewController" />
     public class CriteriaController : ObjectViewController
     {
+        private static readonly ILog log = LogManager.GetLogger(nameof(CriteriaController));
 
         /// <summary>
         /// The components
@@ -56,23 +62,26 @@ namespace GDS.ExpressApp.UserFilter.Module.Controllers
         {
             filteringCriterionAction.Items.Clear();
             IEnumerable<FilteringCriterion> criterions = ObjectSpace.GetObjects<FilteringCriterion>();
-            criterions = from FilteringCriterion cl in criterions orderby cl.Beschreibung select cl;
+            criterions = from FilteringCriterion cl in criterions orderby cl.Description select cl;
 
             foreach (FilteringCriterion criterion in criterions)
             {
                 try
                 {
-                    if (criterion.Objekt.IsAssignableFrom(View.ObjectTypeInfo.Type) &&
+                    if (criterion.Object.IsAssignableFrom(View.ObjectTypeInfo.Type) &&
                    (criterion.Public || criterion.User.UserName == SecuritySystem.CurrentUserName))
                     {
                         filteringCriterionAction.Items.Add(
-                            new ChoiceActionItem(criterion.Beschreibung, criterion.FilterKriterium));
+                            new ChoiceActionItem(criterion.Description, criterion.FilterCriteria));
                     }
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    log.Error($"OnActivated[{ criterion.Oid }]", e);
+                }
             }
             if (filteringCriterionAction.Items.Count > 0)
-                filteringCriterionAction.Items.Add(new ChoiceActionItem("Alle Datensätze anzeigen", null));
+                filteringCriterionAction.Items.Add(new ChoiceActionItem("Показать все", null));
         }
         /// <summary>
         /// Handles the Execute event of the FilteringCriterionAction control.
@@ -96,8 +105,6 @@ namespace GDS.ExpressApp.UserFilter.Module.Controllers
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-        
-
         }
 
        

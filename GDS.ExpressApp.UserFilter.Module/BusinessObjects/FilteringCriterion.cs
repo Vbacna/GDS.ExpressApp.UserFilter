@@ -11,13 +11,15 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+// Adopted Vbacna@gmail.com 2020-03-27
+// ***********************************************************************
 using DevExpress.Data.Filtering;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Utils;
 using DevExpress.Persistent.Base;
-using DevExpress.Persistent.BaseImpl;
+// using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using DevExpress.Xpo;
 using System;
@@ -27,14 +29,12 @@ namespace GDS.ExpressApp.UserFilter.Module.BusinessObjects
 {
     /// <summary>
     /// Class FilteringCriterion used to store Global Filter Seetings of BusinessObjects.
-    /// Implements the <see cref="DevExpress.Persistent.BaseImpl.BaseObject" />
     /// </summary>
-    /// <seealso cref="DevExpress.Persistent.BaseImpl.BaseObject" />
     [DefaultClassOptions, ImageName("Action_Filter")]
     [NavigationItem("Administration")]
-    [XafDisplayNameAttribute("Benutzerdefinierte Filter")]
-    [XafDefaultPropertyAttribute("Beschreibung")]
-    public class FilteringCriterion : BaseObject
+    [XafDisplayNameAttribute("Custom Filter")]
+    [XafDefaultPropertyAttribute(nameof(Description))]
+    public class FilteringCriterion : XPObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FilteringCriterion" /> class.
@@ -54,10 +54,12 @@ namespace GDS.ExpressApp.UserFilter.Module.BusinessObjects
         /// Gets or sets the description.
         /// </summary>
         /// <value>The description.</value>
-        public string Beschreibung
+        [Size(150)]
+        [DbType("varchar(150)")]
+        public string Description
         {
-            get { return GetPropertyValue<string>("Beschreibung"); }
-            set { SetPropertyValue<string>("Beschreibung", value); }
+            get { return GetPropertyValue<string>(nameof(Description)); }
+            set { SetPropertyValue<string>(nameof(Description), value); }
         }
         /// <summary>
         /// Gets or sets the type of the filtered object.
@@ -65,25 +67,27 @@ namespace GDS.ExpressApp.UserFilter.Module.BusinessObjects
         /// <value>The type of the object.</value>
         [ValueConverter(typeof(TypeToStringConverter)), ImmediatePostData]
         [TypeConverter(typeof(LocalizedClassInfoTypeConverter))]
-        public Type Objekt
+        public Type Object
         {
-            get { return GetPropertyValue<Type>("Objekt"); }
+            get { return GetPropertyValue<Type>(nameof(Object)); }
             set
             {
-                SetPropertyValue<Type>("Objekt", value);
-                FilterKriterium = String.Empty;
+                SetPropertyValue<Type>(nameof(Object), value);
+                FilterCriteria = String.Empty;
             }
         }
         /// <summary>
         /// Gets or sets the Criteria String.
         /// </summary>
         /// <value>The criterion.</value>
-        [CriteriaOptions("Objekt"), Size(SizeAttribute.Unlimited)]
+        [CriteriaOptions(nameof(Object))]
         [EditorAlias(EditorAliases.PopupCriteriaPropertyEditor)]
-        public string FilterKriterium
+        [Size(1500)]
+        [DbType("varchar(1500)")]
+        public string FilterCriteria
         {
-            get { return GetPropertyValue<string>("FilterKriterium"); }
-            set { SetPropertyValue<string>("FilterKriterium", value); }
+            get { return GetPropertyValue<string>(nameof(FilterCriteria)); }
+            set { SetPropertyValue<string>(nameof(FilterCriteria), value); }
         }
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="FilteringCriterion"/> is public.
@@ -91,8 +95,8 @@ namespace GDS.ExpressApp.UserFilter.Module.BusinessObjects
         /// <value><c>true</c> if public; otherwise, <c>false</c>.</value>
         public bool Public
         {
-            get { return GetPropertyValue<bool>("Public"); }
-            set { SetPropertyValue<bool>("Public", value); }
+            get { return GetPropertyValue<bool>(nameof(Public)); }
+            set { SetPropertyValue<bool>(nameof(Public), value); }
         }
         //[Browsable(false)]
         /// <summary>
@@ -101,8 +105,8 @@ namespace GDS.ExpressApp.UserFilter.Module.BusinessObjects
         /// <value>The user.</value>
         public PermissionPolicyUser User
         {
-            get { return GetPropertyValue<PermissionPolicyUser>("User"); }
-            set { SetPropertyValue<PermissionPolicyUser>("User", value); }
+            get { return GetPropertyValue<PermissionPolicyUser>(nameof(User)); }
+            set { SetPropertyValue<PermissionPolicyUser>(nameof(User), value); }
         }
 
     }

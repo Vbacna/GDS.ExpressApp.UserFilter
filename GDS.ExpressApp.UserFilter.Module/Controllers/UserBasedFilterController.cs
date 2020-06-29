@@ -29,6 +29,8 @@ using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using DevExpress.Persistent.Validation;
 using GDS.ExpressApp.UserFilter.Module.BusinessObjects;
 
+using log4net;
+
 namespace GDS.ExpressApp.UserFilter.Module.Controllers
 {
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
@@ -39,6 +41,7 @@ namespace GDS.ExpressApp.UserFilter.Module.Controllers
     /// <seealso cref="DevExpress.ExpressApp.ViewController" />
     public partial class UserBasedFilterController : ViewController
     {
+        private static readonly ILog log = LogManager.GetLogger(nameof(UserBasedFilterController));
         /// <summary>
         /// The add filter
         /// </summary>
@@ -51,7 +54,7 @@ namespace GDS.ExpressApp.UserFilter.Module.Controllers
             InitializeComponent();
             this.AddFilter = new SimpleAction(this.components);
             this.Actions.Add(this.AddFilter);
-            this.AddFilter.Caption = "Filter hinzufügen";
+            this.AddFilter.Caption = "Add Filters";
             this.AddFilter.Category = "Filters";
             this.AddFilter.ConfirmationMessage = null;
             this.AddFilter.Id = "AddFilter";
@@ -92,19 +95,24 @@ namespace GDS.ExpressApp.UserFilter.Module.Controllers
         /// <param name="e">The <see cref="SimpleActionExecuteEventArgs"/> instance containing the event data.</param>
         private void AddFilter_Execute(object sender, SimpleActionExecuteEventArgs e)
         {
-            if (View.CurrentObject == null) return;
-
-            IObjectSpace os = Application.CreateObjectSpace();
-            object CurrentObject = View.CurrentObject;
-            FilteringCriterion fc = os.CreateObject<FilteringCriterion>();
-            fc.Public = true;
-            fc.User = os.FindObject<PermissionPolicyUser>(new BinaryOperator("UserName", SecuritySystem.CurrentUserName));
-            fc.Objekt = CurrentObject.GetType();
-            DetailView view = Application.CreateDetailView(os, "FilteringCriterion_DetailView", true);
-            view.CurrentObject = fc;
-            view.ViewEditMode = ViewEditMode.Edit;
-            e.ShowViewParameters.TargetWindow = TargetWindow.NewModalWindow;
-            e.ShowViewParameters.CreatedView = view;
+            try
+            {
+                IObjectSpace os = Application.CreateObjectSpace();
+                object CurrentObject = View.CurrentObject;
+                FilteringCriterion fc = os.CreateObject<FilteringCriterion>();
+                fc.Public = true;
+                fc.User = os.FindObject<PermissionPolicyUser>(new BinaryOperator("UserName", SecuritySystem.CurrentUserName));
+                fc.Object = CurrentObject?.GetType();
+                DetailView view = Application.CreateDetailView(os, "FilteringCriterion_DetailView", true);
+                view.CurrentObject = fc;
+                view.ViewEditMode = ViewEditMode.Edit;
+                e.ShowViewParameters.TargetWindow = TargetWindow.NewModalWindow;
+                e.ShowViewParameters.CreatedView = view;
+            }
+            catch (Exception ex)
+            {
+                log.Error("AddFilter_Execute", ex);
+            }
         }
     }
 }

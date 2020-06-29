@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <BOModel>
+    <Class Name="GDS.ExpressApp.UserFilter.Module.BusinessObjects.FilteringCriterion" Caption="Фильтр">
+      <OwnMembers>
+        <Member Name="Description" Caption="Описание" />
+        <Member Name="FilterCriteria" Caption="Выражение" />
+        <Member Name="Object" Caption="Объект" />
+        <Member Name="Public" Caption="Общий" />
+        <Member Name="User" Caption="Пользователь" />
+      </OwnMembers>
+    </Class>
+  </BOModel>
+  <NavigationItems>
+    <Items>
+      <Item Id="Default" Caption="Главная">
+        <Items>
+          <Item Id="CustomFilters" Caption="Мои Фильтры" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+</Application>
