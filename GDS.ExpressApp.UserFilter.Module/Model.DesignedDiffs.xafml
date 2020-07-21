@@ -14,8 +14,8 @@
     </Items>
   </NavigationItems>
   <SchemaModules>
-    <SchemaModule Name="CloneObjectModule" Version="19.2.6.0" IsNewNode="True" />
-    <SchemaModule Name="SystemModule" Version="19.2.6.0" IsNewNode="True" />
+    <SchemaModule Name="CloneObjectModule" Version="20.1.4.0" IsNewNode="True" />
+    <SchemaModule Name="SystemModule" Version="20.1.4.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
     <DetailView Id="FilteringCriterion_DetailView">
